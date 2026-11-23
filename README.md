@@ -1,9 +1,9 @@
-# 📝 Görev Yöneticisi (Supabase + Jira)
+# Görev Yöneticisi (Supabase + Jira)
 
 Sade HTML/CSS/JavaScript ile yazılmış, **Supabase** altyapısını kullanan bir görev (to-do) yönetim uygulaması. Proje yönetimi **Jira** üzerinden yapılmıştır.
 
-- 🌐 **Canlı site:** https://egemen-al.github.io/gorev-yoneticisi/
-- 📋 **Jira panosu:** https://egemenal.atlassian.net/jira/software/projects/GY/boards/3
+- **Canlı site:** https://egemen-al.github.io/gorev-yoneticisi/
+- **Jira panosu:** https://egemenal.atlassian.net/jira/software/projects/GY/boards/3
 
 ## Özellikler
 - E-posta/şifre ile kayıt olma, giriş ve çıkış (Supabase Auth)
@@ -25,7 +25,7 @@ Sade HTML/CSS/JavaScript ile yazılmış, **Supabase** altyapısını kullanan b
 ├── index.html            # Sayfa yapısı
 ├── style.css             # Tasarım
 ├── app.js                # Uygulama mantığı (Supabase işlemleri)
-├── config.js             # Supabase URL ve anon key
+├── config.js             # Supabase URL ve publishable key
 ├── supabase/schema.sql   # Tablo + güvenlik politikaları
 └── jira/jira-gorevler.csv# Jira'ya içe aktarılacak görevler
 ```
@@ -47,7 +47,7 @@ Sade HTML/CSS/JavaScript ile yazılmış, **Supabase** altyapısını kullanan b
 ### 3) Jira
 1. https://www.atlassian.com/software/jira/free → ücretsiz hesap aç.
 2. **Create project → Scrum** (veya Kanban) şablonu → proje adı: `Görev Yöneticisi`.
-3. Görevleri içe aktar: sağ üst **⚙️ Settings → System → External System Import → CSV** → `jira/jira-gorevler.csv` dosyasını seç, alanları eşleştir (Summary, Issue Type, Description, Priority, Labels).
+3. Görevleri içe aktar: sağ üst **Settings → System → External System Import → CSV** → `jira/jira-gorevler.csv` dosyasını seç, alanları eşleştir (Summary, Issue Type, Description, Priority, Labels).
 4. **Ekip üyesi ekleme:** Proje içinde **Project settings → Access (People) → Add people** → e-posta adresini yaz → rol: *Member* (veya *Viewer*) → **Add**. Alternatif: sol alttaki **+ Invite people** butonu.
 5. Görevleri sprint'e ekle, ilerledikçe *To Do → In Progress → Done* olarak taşı.
 6. (İsteğe bağlı) GitHub bağlantısı: **Apps → Explore more apps → "GitHub for Jira"** kur. Commit mesajlarına Jira anahtarı yazarsan (ör. `GY-4 giriş ekranı eklendi`) commit'ler ilgili görevde görünür.

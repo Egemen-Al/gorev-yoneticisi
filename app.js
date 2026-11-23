@@ -203,8 +203,7 @@ function createPriorityBadge(task) {
 function createDeleteButton(task) {
   const button = document.createElement("button");
   button.className = "delete";
-  button.textContent = "✕";
-  button.title = "Sil";
+  button.textContent = "Sil";
   button.addEventListener("click", () => deleteTask(task));
   return button;
 }
