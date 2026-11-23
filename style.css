@@ -1,0 +1,73 @@
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: #f1f4f9;
+  color: #1f2937;
+}
+
+.container { max-width: 640px; margin: 40px auto; padding: 0 16px; }
+h1 { text-align: center; }
+
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.hidden { display: none; }
+.row { display: flex; gap: 8px; align-items: center; }
+.space-between { justify-content: space-between; margin-bottom: 16px; }
+
+input, select {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 15px;
+  width: 100%;
+  margin-bottom: 10px;
+}
+#task-form input { flex: 1; margin: 0; }
+#task-form select { width: auto; margin: 0; }
+
+button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+}
+button:hover { background: #1d4ed8; }
+button.secondary { background: #e5e7eb; color: #1f2937; }
+button.secondary:hover { background: #d1d5db; }
+button.small { padding: 6px 12px; font-size: 13px; }
+
+.filters { display: flex; gap: 6px; margin: 16px 0; }
+.filter { background: #e5e7eb; color: #1f2937; padding: 6px 12px; font-size: 13px; }
+.filter.active { background: #2563eb; color: #fff; }
+
+#task-list { list-style: none; padding: 0; margin: 0; }
+#task-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-bottom: 1px solid #f1f1f1;
+}
+#task-list li.done .title { text-decoration: line-through; color: #9ca3af; }
+#task-list .title { flex: 1; word-break: break-word; }
+#task-list .delete { background: transparent; color: #dc2626; padding: 4px 8px; }
+
+.badge { font-size: 12px; padding: 2px 8px; border-radius: 999px; }
+.badge.dusuk { background: #dcfce7; color: #166534; }
+.badge.orta { background: #fef9c3; color: #854d0e; }
+.badge.yuksek { background: #fee2e2; color: #991b1b; }
+
+.message { min-height: 20px; font-size: 14px; }
+.message.error { color: #dc2626; }
+.message.success { color: #16a34a; }
+.muted { color: #6b7280; font-size: 13px; }

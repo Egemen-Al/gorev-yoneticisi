@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Görev Yöneticisi</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <main class="container">
+    <h1>📝 Görev Yöneticisi</h1>
+
+    <!-- Giriş / Kayıt -->
+    <section id="auth-section" class="card hidden">
+      <h2>Giriş Yap / Kayıt Ol</h2>
+      <form id="auth-form">
+        <input type="email" id="email" placeholder="E-posta" required />
+        <input type="password" id="password" placeholder="Şifre (en az 6 karakter)" minlength="6" required />
+        <div class="row">
+          <button type="submit" id="login-btn">Giriş Yap</button>
+          <button type="button" id="signup-btn" class="secondary">Kayıt Ol</button>
+        </div>
+      </form>
+      <p id="auth-message" class="message"></p>
+    </section>
+
+    <!-- Görevler -->
+    <section id="app-section" class="card hidden">
+      <div class="row space-between">
+        <span id="user-email"></span>
+        <button id="logout-btn" class="secondary small">Çıkış</button>
+      </div>
+
+      <form id="task-form" class="row">
+        <input type="text" id="task-title" placeholder="Yeni görev..." maxlength="200" required />
+        <select id="task-priority">
+          <option value="dusuk">Düşük</option>
+          <option value="orta" selected>Orta</option>
+          <option value="yuksek">Yüksek</option>
+        </select>
+        <button type="submit">Ekle</button>
+      </form>
+
+      <div class="filters">
+        <button data-filter="hepsi" class="filter active">Hepsi</button>
+        <button data-filter="aktif" class="filter">Aktif</button>
+        <button data-filter="tamamlanan" class="filter">Tamamlanan</button>
+      </div>
+
+      <ul id="task-list"></ul>
+      <p id="task-count" class="muted"></p>
+    </section>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

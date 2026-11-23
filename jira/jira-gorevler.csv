@@ -1,0 +1,13 @@
+Summary,Issue Type,Description,Priority,Labels
+Proje kurulumu ve GitHub deposu,Task,GitHub deposunu oluştur; README ve .gitignore ekle.,High,kurulum
+Supabase projesi oluşturma,Task,Supabase'de proje aç; URL ve anon key'i config.js'e ekle.,High,supabase
+Veritabanı şeması ve RLS,Task,tasks tablosunu oluştur ve Row Level Security politikalarını ekle (supabase/schema.sql).,High,supabase
+Kullanıcı kayıt ve giriş,Story,Supabase Auth ile e-posta/şifre kayıt-giriş-çıkış ekranı.,High,auth
+Görev ekleme,Story,Kullanıcı başlık ve öncelik seçerek görev ekleyebilir.,Medium,frontend
+Görev listeleme,Story,Kullanıcının görevleri en yeniden eskiye listelenir.,Medium,frontend
+Görev tamamlama,Story,Onay kutusu ile görev tamamlandı/aktif olarak işaretlenir.,Medium,frontend
+Görev silme,Story,Kullanıcı onay aldıktan sonra görevi siler.,Medium,frontend
+Filtreleme (Hepsi/Aktif/Tamamlanan),Story,Görev listesi duruma göre filtrelenir.,Low,frontend
+Arayüz tasarımı (CSS),Task,Responsive ve sade bir arayüz; öncelik rozetleri.,Low,frontend
+Test ve hata düzeltme,Task,Tüm akışları test et; farklı kullanıcıların birbirinin verisini göremediğini doğrula.,Medium,test
+Yayınlama (GitHub Pages),Task,Siteyi GitHub Pages ile yayına al ve linki README'ye ekle.,Low,deploy
