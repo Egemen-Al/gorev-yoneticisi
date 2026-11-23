@@ -48,7 +48,7 @@ Sade HTML/CSS/JavaScript ile yazılmış, **Supabase** altyapısını kullanan b
 1. https://www.atlassian.com/software/jira/free → ücretsiz hesap aç.
 2. **Create project → Scrum** (veya Kanban) şablonu → proje adı: `Görev Yöneticisi`.
 3. Görevleri içe aktar: sağ üst **⚙️ Settings → System → External System Import → CSV** → `jira/jira-gorevler.csv` dosyasını seç, alanları eşleştir (Summary, Issue Type, Description, Priority, Labels).
-4. **Hocayı ekleme:** Proje içinde **Project settings → Access (People) → Add people** → hocanın e-postasını yaz → rol: *Member* (veya *Viewer*) → **Add**. Alternatif: sol alttaki **+ Invite people** butonu.
+4. **Ekip üyesi ekleme:** Proje içinde **Project settings → Access (People) → Add people** → e-posta adresini yaz → rol: *Member* (veya *Viewer*) → **Add**. Alternatif: sol alttaki **+ Invite people** butonu.
 5. Görevleri sprint'e ekle, ilerledikçe *To Do → In Progress → Done* olarak taşı.
 6. (İsteğe bağlı) GitHub bağlantısı: **Apps → Explore more apps → "GitHub for Jira"** kur. Commit mesajlarına Jira anahtarı yazarsan (ör. `GY-4 giriş ekranı eklendi`) commit'ler ilgili görevde görünür.
 
