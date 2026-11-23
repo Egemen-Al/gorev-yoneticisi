@@ -35,7 +35,7 @@ Sade HTML/CSS/JavaScript ile yazılmış, **Supabase** altyapısını kullanan b
 1. https://supabase.com → **Start your project** → GitHub ile giriş yap.
 2. **New project** oluştur (bölge: Frankfurt / Central EU).
 3. Sol menü **SQL Editor** → `supabase/schema.sql` içeriğini yapıştır → **Run**.
-4. **Project Settings → API** sayfasından `Project URL` ve `anon public` anahtarını kopyala, `config.js` dosyasına yapıştır.
+4. **Project Settings → API Keys** sayfasından `Project URL` ve `publishable` anahtarını kopyala, `config.js` dosyasına yapıştır.
 5. (İsteğe bağlı) Test kolaylığı için **Authentication → Sign In / Providers → Email** altında *Confirm email* seçeneğini kapatabilirsin.
 
 ### 2) Çalıştırma
