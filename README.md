@@ -2,6 +2,9 @@
 
 Sade HTML/CSS/JavaScript ile yazılmış, **Supabase** altyapısını kullanan bir görev (to-do) yönetim uygulaması. Proje yönetimi **Jira** üzerinden yapılmıştır.
 
+- 🌐 **Canlı site:** https://egemen-al.github.io/gorev-yoneticisi/
+- 📋 **Jira panosu:** https://egemenal.atlassian.net/jira/software/projects/GY/boards/3
+
 ## Özellikler
 - E-posta/şifre ile kayıt olma, giriş ve çıkış (Supabase Auth)
 - Görev ekleme, listeleme, tamamlama ve silme (Supabase Database)
