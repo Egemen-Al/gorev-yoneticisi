@@ -60,6 +60,7 @@ button.small { padding: 6px 12px; font-size: 13px; }
 }
 #task-list li.done .title { text-decoration: line-through; color: #9ca3af; }
 #task-list .title { flex: 1; word-break: break-word; }
+#task-list .task-checkbox { width: auto; margin: 0; }
 #task-list .delete { background: transparent; color: #dc2626; padding: 4px 8px; }
 
 .badge { font-size: 12px; padding: 2px 8px; border-radius: 999px; }

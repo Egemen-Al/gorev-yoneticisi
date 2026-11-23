@@ -1,154 +1,252 @@
-const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
-const $ = (id) => document.getElementById(id);
-const authSection = $("auth-section");
-const appSection = $("app-section");
-const authMessage = $("auth-message");
-const taskList = $("task-list");
+const TASKS_TABLE = "tasks";
+const MIN_PASSWORD_LENGTH = 6;
 
-let tasks = [];
-let currentFilter = "hepsi";
+const PRIORITY_LABELS = {
+  dusuk: "Düşük",
+  orta: "Orta",
+  yuksek: "Yüksek",
+};
 
-const PRIORITY_LABELS = { dusuk: "Düşük", orta: "Orta", yuksek: "Yüksek" };
+const FILTERS = {
+  hepsi: () => true,
+  aktif: (task) => !task.is_done,
+  tamamlanan: (task) => task.is_done,
+};
 
-function showMessage(text, type = "error") {
-  authMessage.textContent = text;
-  authMessage.className = `message ${type}`;
+const elements = {
+  authSection: document.getElementById("auth-section"),
+  authForm: document.getElementById("auth-form"),
+  authMessage: document.getElementById("auth-message"),
+  emailInput: document.getElementById("email"),
+  passwordInput: document.getElementById("password"),
+  signupButton: document.getElementById("signup-btn"),
+  appSection: document.getElementById("app-section"),
+  userEmail: document.getElementById("user-email"),
+  logoutButton: document.getElementById("logout-btn"),
+  taskForm: document.getElementById("task-form"),
+  taskTitleInput: document.getElementById("task-title"),
+  taskPrioritySelect: document.getElementById("task-priority"),
+  taskList: document.getElementById("task-list"),
+  taskCount: document.getElementById("task-count"),
+  filterButtons: document.querySelectorAll(".filter"),
+};
+
+const state = {
+  tasks: [],
+  activeFilter: "hepsi",
+};
+
+function showAuthMessage(text, type = "error") {
+  elements.authMessage.textContent = text;
+  elements.authMessage.className = `message ${type}`;
 }
 
-// ---------- Kimlik doğrulama ----------
-$("auth-form").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const { error } = await db.auth.signInWithPassword({
-    email: $("email").value,
-    password: $("password").value,
-  });
-  if (error) showMessage("Giriş başarısız: " + error.message);
-});
+function getCredentials() {
+  return {
+    email: elements.emailInput.value.trim(),
+    password: elements.passwordInput.value,
+  };
+}
 
-$("signup-btn").addEventListener("click", async () => {
-  const email = $("email").value;
-  const password = $("password").value;
-  if (!email || password.length < 6) {
-    return showMessage("Geçerli e-posta ve en az 6 karakterli şifre girin.");
+async function handleLogin(event) {
+  event.preventDefault();
+  const { error } = await supabaseClient.auth.signInWithPassword(getCredentials());
+  if (error) showAuthMessage(`Giriş başarısız: ${error.message}`);
+}
+
+async function handleSignup() {
+  const credentials = getCredentials();
+
+  if (!credentials.email || credentials.password.length < MIN_PASSWORD_LENGTH) {
+    showAuthMessage(`Geçerli e-posta ve en az ${MIN_PASSWORD_LENGTH} karakterli şifre girin.`);
+    return;
   }
-  const { data, error } = await db.auth.signUp({ email, password });
-  if (error) return showMessage("Kayıt başarısız: " + error.message);
-  if (!data.session) showMessage("Kayıt başarılı! E-postanı onayladıktan sonra giriş yap.", "success");
-});
 
-$("logout-btn").addEventListener("click", () => db.auth.signOut());
+  const { data, error } = await supabaseClient.auth.signUp(credentials);
 
-db.auth.onAuthStateChange((_event, session) => renderAuth(session));
+  if (error) {
+    showAuthMessage(`Kayıt başarısız: ${error.message}`);
+    return;
+  }
 
-function renderAuth(session) {
+  if (!data.session) {
+    showAuthMessage("Kayıt başarılı! E-postanı onayladıktan sonra giriş yap.", "success");
+  }
+}
+
+function handleLogout() {
+  supabaseClient.auth.signOut();
+}
+
+function showAuthScreen() {
+  elements.appSection.classList.add("hidden");
+  elements.authSection.classList.remove("hidden");
+  state.tasks = [];
+  elements.taskList.innerHTML = "";
+}
+
+function showAppScreen(user) {
+  elements.authSection.classList.add("hidden");
+  elements.appSection.classList.remove("hidden");
+  elements.userEmail.textContent = user.email;
+  loadTasks();
+}
+
+function renderSession(session) {
   if (session) {
-    authSection.classList.add("hidden");
-    appSection.classList.remove("hidden");
-    $("user-email").textContent = session.user.email;
-    loadTasks();
+    showAppScreen(session.user);
   } else {
-    appSection.classList.add("hidden");
-    authSection.classList.remove("hidden");
-    tasks = [];
-    taskList.innerHTML = "";
+    showAuthScreen();
   }
 }
 
-// ---------- Görevler (CRUD) ----------
 async function loadTasks() {
-  const { data, error } = await db
-    .from("tasks")
+  const { data, error } = await supabaseClient
+    .from(TASKS_TABLE)
     .select("*")
     .order("created_at", { ascending: false });
-  if (error) return alert("Görevler yüklenemedi: " + error.message);
-  tasks = data;
+
+  if (error) {
+    alert(`Görevler yüklenemedi: ${error.message}`);
+    return;
+  }
+
+  state.tasks = data;
   renderTasks();
 }
 
-$("task-form").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const title = $("task-title").value.trim();
+async function createTask(event) {
+  event.preventDefault();
+
+  const title = elements.taskTitleInput.value.trim();
   if (!title) return;
-  const { data: { user } } = await db.auth.getUser();
-  const { data, error } = await db
-    .from("tasks")
-    .insert({ title, priority: $("task-priority").value, user_id: user.id })
+
+  const { data, error } = await supabaseClient
+    .from(TASKS_TABLE)
+    .insert({ title, priority: elements.taskPrioritySelect.value })
     .select()
     .single();
-  if (error) return alert("Görev eklenemedi: " + error.message);
-  tasks.unshift(data);
-  $("task-title").value = "";
-  renderTasks();
-});
 
-async function toggleTask(task) {
-  const { error } = await db
-    .from("tasks")
-    .update({ is_done: !task.is_done })
+  if (error) {
+    alert(`Görev eklenemedi: ${error.message}`);
+    return;
+  }
+
+  state.tasks.unshift(data);
+  elements.taskTitleInput.value = "";
+  renderTasks();
+}
+
+async function toggleTaskDone(task) {
+  const isDone = !task.is_done;
+
+  const { error } = await supabaseClient
+    .from(TASKS_TABLE)
+    .update({ is_done: isDone })
     .eq("id", task.id);
-  if (error) return alert("Güncellenemedi: " + error.message);
-  task.is_done = !task.is_done;
+
+  if (error) {
+    alert(`Görev güncellenemedi: ${error.message}`);
+    return;
+  }
+
+  task.is_done = isDone;
   renderTasks();
 }
 
 async function deleteTask(task) {
   if (!confirm(`"${task.title}" silinsin mi?`)) return;
-  const { error } = await db.from("tasks").delete().eq("id", task.id);
-  if (error) return alert("Silinemedi: " + error.message);
-  tasks = tasks.filter((t) => t.id !== task.id);
+
+  const { error } = await supabaseClient.from(TASKS_TABLE).delete().eq("id", task.id);
+
+  if (error) {
+    alert(`Görev silinemedi: ${error.message}`);
+    return;
+  }
+
+  state.tasks = state.tasks.filter((item) => item.id !== task.id);
   renderTasks();
 }
 
-// ---------- Filtre ve çizim ----------
-document.querySelectorAll(".filter").forEach((btn) =>
-  btn.addEventListener("click", () => {
-    document.querySelectorAll(".filter").forEach((b) => b.classList.remove("active"));
-    btn.classList.add("active");
-    currentFilter = btn.dataset.filter;
-    renderTasks();
-  })
-);
-
-function renderTasks() {
-  const visible = tasks.filter((t) =>
-    currentFilter === "aktif" ? !t.is_done :
-    currentFilter === "tamamlanan" ? t.is_done : true
-  );
-
-  taskList.innerHTML = "";
-  for (const task of visible) {
-    const li = document.createElement("li");
-    if (task.is_done) li.classList.add("done");
-
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.checked = task.is_done;
-    checkbox.style.width = "auto";
-    checkbox.style.margin = "0";
-    checkbox.addEventListener("change", () => toggleTask(task));
-
-    const title = document.createElement("span");
-    title.className = "title";
-    title.textContent = task.title; // textContent: XSS'e karşı güvenli
-
-    const badge = document.createElement("span");
-    badge.className = `badge ${task.priority}`;
-    badge.textContent = PRIORITY_LABELS[task.priority] || task.priority;
-
-    const del = document.createElement("button");
-    del.className = "delete";
-    del.textContent = "✕";
-    del.title = "Sil";
-    del.addEventListener("click", () => deleteTask(task));
-
-    li.append(checkbox, title, badge, del);
-    taskList.appendChild(li);
-  }
-
-  const remaining = tasks.filter((t) => !t.is_done).length;
-  $("task-count").textContent = `${remaining} aktif / ${tasks.length} toplam görev`;
+function setActiveFilter(filterButton) {
+  elements.filterButtons.forEach((button) => button.classList.remove("active"));
+  filterButton.classList.add("active");
+  state.activeFilter = filterButton.dataset.filter;
+  renderTasks();
 }
 
-// Sayfa açılışında mevcut oturumu kontrol et
-db.auth.getSession().then(({ data }) => renderAuth(data.session));
+function createTaskCheckbox(task) {
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  checkbox.className = "task-checkbox";
+  checkbox.checked = task.is_done;
+  checkbox.addEventListener("change", () => toggleTaskDone(task));
+  return checkbox;
+}
+
+function createTaskTitle(task) {
+  const title = document.createElement("span");
+  title.className = "title";
+  title.textContent = task.title;
+  return title;
+}
+
+function createPriorityBadge(task) {
+  const badge = document.createElement("span");
+  badge.className = `badge ${task.priority}`;
+  badge.textContent = PRIORITY_LABELS[task.priority] ?? task.priority;
+  return badge;
+}
+
+function createDeleteButton(task) {
+  const button = document.createElement("button");
+  button.className = "delete";
+  button.textContent = "✕";
+  button.title = "Sil";
+  button.addEventListener("click", () => deleteTask(task));
+  return button;
+}
+
+function createTaskItem(task) {
+  const item = document.createElement("li");
+  item.classList.toggle("done", task.is_done);
+  item.append(
+    createTaskCheckbox(task),
+    createTaskTitle(task),
+    createPriorityBadge(task),
+    createDeleteButton(task)
+  );
+  return item;
+}
+
+function renderTaskCount() {
+  const activeCount = state.tasks.filter(FILTERS.aktif).length;
+  elements.taskCount.textContent = `${activeCount} aktif / ${state.tasks.length} toplam görev`;
+}
+
+function renderTasks() {
+  const visibleTasks = state.tasks.filter(FILTERS[state.activeFilter]);
+  elements.taskList.replaceChildren(...visibleTasks.map(createTaskItem));
+  renderTaskCount();
+}
+
+function bindEvents() {
+  elements.authForm.addEventListener("submit", handleLogin);
+  elements.signupButton.addEventListener("click", handleSignup);
+  elements.logoutButton.addEventListener("click", handleLogout);
+  elements.taskForm.addEventListener("submit", createTask);
+  elements.filterButtons.forEach((button) =>
+    button.addEventListener("click", () => setActiveFilter(button))
+  );
+}
+
+async function init() {
+  bindEvents();
+  supabaseClient.auth.onAuthStateChange((_event, session) => renderSession(session));
+  const { data } = await supabaseClient.auth.getSession();
+  renderSession(data.session);
+}
+
+init();

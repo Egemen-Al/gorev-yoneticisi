@@ -1,5 +1,3 @@
--- Supabase panelinde: SQL Editor → New query → bu dosyayı yapıştır → Run
-
 create table if not exists public.tasks (
   id          bigint generated always as identity primary key,
   user_id     uuid not null references auth.users (id) on delete cascade default auth.uid(),
@@ -11,10 +9,8 @@ create table if not exists public.tasks (
 
 create index if not exists tasks_user_id_idx on public.tasks (user_id);
 
--- Data API erişimi (giriş yapmış kullanıcılar); hangi satırlara erişeceklerini RLS belirler
 grant select, insert, update, delete on public.tasks to authenticated;
 
--- Row Level Security: her kullanıcı yalnızca kendi görevlerini görür/değiştirir
 alter table public.tasks enable row level security;
 
 create policy "Kullanici kendi gorevlerini okur"
